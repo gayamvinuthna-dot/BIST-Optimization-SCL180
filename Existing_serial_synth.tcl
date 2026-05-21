@@ -1,66 +1,78 @@
 # ============================================================
-# Existing Serial CXM Synthesis
+# existing_bist.sdc
+# Conventional Serial-CXM BIST Constraints
 # Technology : SCL180 / GPDK180
+# Units       : ns
 # ============================================================
 
 # ------------------------------------------------------------
-# 1. LIBRARY SEARCH PATH
+# 1. CLOCK DEFINITION
 # ------------------------------------------------------------
 
-set_attribute lib_search_path { /mnt/hgfs/scl_bridge/SCLPDK_V3.0_KIT/scl180/stdcell/fs120/6M1L/liberty/lib_flow_ss } /
+create_clock -name clk -period 10 [get_ports clk]
 
 # ------------------------------------------------------------
-# 2. TARGET LIBRARY
+# 2. INPUT / OUTPUT DELAYS
 # ------------------------------------------------------------
 
-set_attribute library { tsl18fs120_scl_ss.lib } /
+set_input_delay 2 -clock clk [all_inputs]
+
+set_output_delay 2 -clock clk [all_outputs]
 
 # ------------------------------------------------------------
-# 3. READ RTL FILES
+# 3. CLOCK TRANSITION
 # ------------------------------------------------------------
 
-read_hdl -v2001 lfsr.v
-read_hdl -v2001 sdm.v
-read_hdl -v2001 cxm_serial.v
-read_hdl -v2001 misr.v
-read_hdl -v2001 bist_top_serial.v
+set_clock_transition -rise 0.15 [get_clocks clk]
+
+set_clock_transition -fall 0.12 [get_clocks clk]
 
 # ------------------------------------------------------------
-# 4. ELABORATE TOP MODULE
+# 4. CLOCK LATENCY
 # ------------------------------------------------------------
 
-elaborate bist_top_serial
+set_clock_latency -source 1.5 [get_clocks clk]
+
+set_clock_latency 0.8 [get_clocks clk]
 
 # ------------------------------------------------------------
-# 5. READ SDC
+# 5. CLOCK UNCERTAINTY
 # ------------------------------------------------------------
 
-read_sdc existing_bist.sdc
+set_clock_uncertainty -setup 0.30 [get_clocks clk]
+
+set_clock_uncertainty -hold 0.10 [get_clocks clk]
 
 # ------------------------------------------------------------
-# 6. SYNTHESIS
+# 6. MAX TRANSITION
 # ------------------------------------------------------------
 
-synthesize -to_mapped -effort medium
+set_max_transition 0.50 [current_design]
 
 # ------------------------------------------------------------
-# 7. REPORTS
+# 7. MAX FANOUT
 # ------------------------------------------------------------
 
-report timing > reports/timing_serial.rpt
-report power  > reports/power_serial.rpt
-report area   > reports/area_serial.rpt
-report gates  > reports/gates_serial.rpt
-report qor    > reports/qor_serial.rpt
+set_max_fanout 8 [current_design]
 
 # ------------------------------------------------------------
-# 8. WRITE NETLIST
+# 8. OUTPUT LOAD
 # ------------------------------------------------------------
 
-write_hdl -mapped > netlists/bist_top_serial_netlist.v
+set_load 0.05 [all_outputs]
 
 # ------------------------------------------------------------
-# DONE
+# 9. FALSE PATH FOR RESET
 # ------------------------------------------------------------
 
-puts "\n=== Existing Serial CXM Synthesis DONE ==="
+set_false_path -from [get_ports rst]
+
+# ------------------------------------------------------------
+# 10. WIRE LOAD MODEL
+# ------------------------------------------------------------
+
+set_wire_load_mode top
+
+# ============================================================
+# END
+# ============================================================

@@ -1,6 +1,6 @@
 # ============================================================
 # BASIC ENCOUNTER PD FLOW
-# SCL180 / GPDK180
+# Technology : SCL180 / GPDK180
 # ============================================================
 
 # ------------------------------------------------------------
@@ -11,51 +11,64 @@ set init_verilog "netlists/bist_top_serial_netlist.v"
 
 set init_top_cell "bist_top_serial"
 
+# ------------------------------------------------------------
+# 2. LEF FILES
+# ------------------------------------------------------------
+
 set init_lef_file {
-/mnt/hgfs/scl_bridge/SCLPDK_V3.0_KIT/scl180/techlef/tech.lef
-/mnt/hgfs/scl_bridge/SCLPDK_V3.0_KIT/scl180/stdcell/fs120/6M1L/lef/tsl18fs120.lef
+\
+/mnt/hgfs/scl_bridge/SCLPDK_V3.0_KIT/scl180/stdcell/fs120/6M1L/lef/scl18fs120_tech.lef
+\
+/mnt/hgfs/scl_bridge/SCLPDK_V3.0_KIT/scl180/stdcell/fs120/6M1L/lef/scl18fs120_std.lef
 }
+
+# ------------------------------------------------------------
+# 3. MMMC FILE
+# ------------------------------------------------------------
 
 set init_mmmc_file "mmmc.tcl"
 
 # ------------------------------------------------------------
-# 2. INITIALIZE DESIGN
+# 4. INITIALIZE DESIGN
 # ------------------------------------------------------------
 
 init_design
 
 # ------------------------------------------------------------
-# 3. FLOORPLAN
+# 5. FLOORPLAN
 # ------------------------------------------------------------
 
-floorPlan -site core -r 1.0 0.7 20 20 20 20
+floorPlan -site CoreSite -r 1.0 0.7 20 20 20 20
 
 # ------------------------------------------------------------
-# 4. POWER RINGS
+# 6. POWER PLANNING
 # ------------------------------------------------------------
 
-addRing -width 2 -spacing 1 -layer {top metal5 bottom metal5 left metal4 right metal4}
+addRing \
+-width 2 \
+-spacing 1 \
+-layer {top metal5 bottom metal5 left metal4 right metal4}
 
 # ------------------------------------------------------------
-# 5. PLACEMENT
+# 7. PLACEMENT
 # ------------------------------------------------------------
 
 placeDesign
 
 # ------------------------------------------------------------
-# 6. CLOCK TREE SYNTHESIS
+# 8. CLOCK TREE SYNTHESIS
 # ------------------------------------------------------------
 
 clockDesign
 
 # ------------------------------------------------------------
-# 7. ROUTING
+# 9. ROUTING
 # ------------------------------------------------------------
 
 routeDesign
 
 # ------------------------------------------------------------
-# 8. REPORTS
+# 10. REPORTS
 # ------------------------------------------------------------
 
 report_timing > timing_pd.rpt
@@ -65,7 +78,7 @@ report_power > power_pd.rpt
 report_area > area_pd.rpt
 
 # ------------------------------------------------------------
-# 9. SAVE DESIGN
+# 11. SAVE DESIGN
 # ------------------------------------------------------------
 
 saveDesign final_pd.enc

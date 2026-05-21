@@ -1,0 +1,40 @@
+module tb_existing;
+
+reg clk;
+reg rst;
+
+wire [7:0] test_pattern;
+wire xor_result;
+wire [7:0] signature;
+
+bist_top_serial DUT (
+    .clk(clk),
+    .rst(rst),
+    .test_pattern(test_pattern),
+    .xor_result(xor_result),
+    .signature(signature)
+);
+
+initial
+begin
+    clk = 0;
+    forever #5 clk = ~clk;
+end
+
+initial
+begin
+    rst = 1;
+    #20;
+    rst = 0;
+
+    #3000;
+    $finish;
+end
+
+initial
+begin
+    $monitor("TIME=%0t PATTERN=%h XOR=%b SIG=%h",
+             $time,test_pattern,xor_result,signature);
+end
+
+endmodule

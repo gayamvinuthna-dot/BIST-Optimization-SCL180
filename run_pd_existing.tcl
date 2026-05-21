@@ -41,13 +41,10 @@ init_design
 floorPlan -site CoreSite -r 1.0 0.7 20 20 20 20
 
 # ------------------------------------------------------------
-# 6. POWER PLANNING
+# 6. POWER RINGS
 # ------------------------------------------------------------
 
-addRing \
--width 2 \
--spacing 1 \
--layer {top metal5 bottom metal5 left metal4 right metal4}
+addRing -nets {VDD VSS} -type core_rings -layer {top M5 bottom M5 left M4 right M4} -width 2 -spacing 1
 
 # ------------------------------------------------------------
 # 7. PLACEMENT
